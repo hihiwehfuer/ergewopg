@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+  <title>Игры | Royal Palace</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;800&family=Roboto:wght@400;700&display=swap" rel="stylesheet"/>
+  <style>
+    :root { --gold:#D4AF37; --gold-soft:#F5D98C; --gold-deep:#A7892D; --champagne:#FFEFC4; --velvet-1:#0F0B12; --velvet-2:#1A1220; --velvet-3:#2A1A2F; --violet:#7c3aed; --magenta:#a21caf; --safe-bottom: env(safe-area-inset-bottom); }
+    html, body { margin:0; padding:0; height:100%; overflow:hidden; font-family:'Roboto',sans-serif; color:#f6f4fb; background: radial-gradient(1200px 800px at 70% 30%, rgba(245,217,140,.12), transparent 60%), radial-gradient(1000px 700px at 20% 70%, rgba(162,28,175,.10), transparent 65%), radial-gradient(900px 600px at 80% 85%, rgba(42,26,47,.5), transparent 70%), linear-gradient(180deg, var(--velvet-1) 0%, var(--velvet-2) 60%, #0C0811 100%); background-attachment: fixed; letter-spacing:.2px; }
+    .vignette { position:fixed; inset:0; pointer-events:none; z-index:0; background: radial-gradient(1200px 800px at 50% 50%, transparent 40%, rgba(0,0,0,.35) 100%); }
+
+    /* Sidebar (desktop/tablet) */
+    .sidebar { background: linear-gradient(180deg, rgba(24,18,38,.98), rgba(18,14,32,.98)); border-right:1.6px solid rgba(212,175,55,.45); box-shadow:2px 0 30px rgba(80,0,120,.25); z-index:30; transition:width .3s; width:230px; position:fixed; inset:0 auto 0 0; display:flex; flex-direction:column; align-items:center; padding-top:84px; overflow:hidden; }
+    .main-offset { margin-left:230px; }
+    .sidebar-link { box-sizing:border-box; border:1.6px solid rgba(212,175,55,.45); border-radius:14px; padding:14px 12px; margin:0 .5rem 18px .5rem; transition: background .3s, color .2s, box-shadow .3s, border .3s, transform .2s; font-weight:700; background: rgba(60,30,80,.12); box-shadow:0 6px 14px rgba(162,28,175,.18); display:flex; align-items:center; gap:.65rem; color:#fff; text-decoration:none; font-size:19px; }
+    .sidebar-link:hover { background: linear-gradient(90deg, var(--magenta) 0%, var(--violet) 100%); border-color: rgba(245,217,140,.6); transform: translateY(-2px); }
+    .sidebar-link.active { background: linear-gradient(90deg, var(--gold) 0%, var(--gold-soft) 100%); color:#1a1a3a !important; border-color: rgba(255,215,0,.85); }
+    .sidebar-icon { font-size:2.1rem; }
+    .sidebar-text { font-family:'Poppins',sans-serif; font-weight:800; }
+
+    /* Page container */
+    .page-wrap { position:fixed; inset:0; display:grid; place-items:center; z-index:10; }
+    .page { backdrop-filter: blur(16px) saturate(120%); -webkit-backdrop-filter: blur(16px) saturate(120%); background: linear-gradient(180deg, rgba(45,30,55,.55), rgba(24,18,38,.65)); border:1.6px solid rgba(212,175,55,.55); border-radius:26px; box-shadow:0 28px 80px rgba(0,0,0,.55), inset 0 0 60px rgba(212,175,55,.06); padding:28px 26px 24px; width:min(94vw, 1200px); position:relative; overflow:hidden; isolation:isolate; }
+    .page:before { content:''; position:absolute; inset:-2px; background: conic-gradient(from 160deg at 50% 50%, rgba(212,175,55,0), rgba(212,175,55,.18), rgba(245,217,140,.22), rgba(162,28,175,.14), rgba(212,175,55,0)); filter:blur(18px); pointer-events:none; z-index:-1; }
+    .page::after { content:''; position:absolute; inset:0; pointer-events:none; opacity:.45; background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'><g stroke='%23D4AF37' stroke-opacity='0.35' fill='none' stroke-width='1.2'><path d='M10,60c20-40,80-40,100,0'/><path d='M20,70c20-30,60-30,80,0'/><path d='M30,80c20-20,40-20,60,0'/></g></svg>") no-repeat 10px 10px / 120px 120px, url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'><g stroke='%23D4AF37' stroke-opacity='0.35' fill='none' stroke-width='1.2' transform='rotate(180 60 60)'><path d='M10,60c20-40,80-40,100,0'/><path d='M20,70c20-30,60-30,80,0'/><path d='M30,80c20-20,40-20,60,0'/></g></svg>") no-repeat right 10px bottom 10px / 120px 120px; }
+    .top-accent { position:absolute; top:0; left:0; right:0; height:3px; background: linear-gradient(90deg, transparent, var(--gold), var(--gold-soft), var(--gold), transparent); filter: drop-shadow(0 0 8px rgba(255,215,0,.8)); background-size:220% 100%; animation: slide-accent 4s linear infinite; }
+
+    .header { display:flex; align-items:center; justify-content:space-between; gap:16px; padding:8px 8px 18px; }
+    .title { font-family:'Poppins',sans-serif; font-weight:800; font-size: clamp(1.6rem, 1.2rem + 1.2vw, 2.2rem); background: linear-gradient(92deg, var(--gold), #fff 40%, var(--gold-soft)); -webkit-background-clip:text; background-clip:text; color:transparent; text-shadow:0 0 8px rgba(244,215,124,.35), 0 0 24px rgba(214,175,55,.28); }
+
+    /* Mini slot demo */
+    .mini-slot { display:flex; align-items:center; gap:10px; background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03)); border:1.5px solid rgba(212,175,55,.45); border-radius:16px; padding:10px 12px; box-shadow: inset 0 0 22px rgba(212,175,55,.12); }
+    .reel { width:46px; height:46px; display:grid; place-items:center; background: rgba(0,0,0,.25); border: 1px solid rgba(212,175,55,.35); border-radius:12px; font-size:26px; }
+    .spin-btn { cursor:pointer; user-select:none; border-radius:12px; padding:10px 14px; font-weight:900; letter-spacing:.02em; font-family:'Poppins',sans-serif; border:1.6px solid var(--gold-deep); background: linear-gradient(180deg, var(--gold-soft), var(--gold)); color:#1a1330; box-shadow: 0 8px 18px rgba(212,175,55,.35), inset 0 2px 0 rgba(255,255,255,.5); }
+    .result { min-width:120px; text-align:center; font-weight:800; color:var(--gold-soft); }
+
+    /* Games grid */
+    .grid { display:grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap:18px; padding:10px; perspective: 1000px; }
+    .card { border-radius:18px; position:relative; overflow:hidden; transform-style: preserve-3d; transition: transform .25s ease, box-shadow .25s ease; box-shadow: 0 14px 40px rgba(0,0,0,.4); }
+    .card:hover { transform: translateY(-6px) rotateX(2deg) rotateY(-2deg); box-shadow: 0 22px 60px rgba(212,175,55,.25); }
+
+    .card-border { position:absolute; inset:0; border-radius:18px; padding:1px; background: linear-gradient(135deg, rgba(245,217,140,.7), rgba(162,28,175,.35)); -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask-composite: exclude; }
+
+    .card-inner { position:relative; border-radius:16px; background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03)); border:1px solid rgba(212,175,55,.25); display:flex; flex-direction:column; min-height: 210px; }
+
+    .banner { height: 96px; position:relative; overflow:hidden; display:flex; align-items:center; justify-content:center; }
+    .banner::before { content: attr(data-emoji); position:absolute; font-size:72px; filter: drop-shadow(0 6px 14px rgba(0,0,0,.45)); opacity:.9; }
+    .banner::after { content:''; position:absolute; inset:0; background: radial-gradient(400px 140px at 20% 20%, rgba(245,217,140,.2), transparent 60%), linear-gradient(180deg, rgba(0,0,0,0) 20%, rgba(0,0,0,.25) 100%); }
+
+    .badges { position:absolute; top:8px; left:8px; display:flex; gap:6px; }
+    .badge { font-size:10px; font-weight:900; font-family:'Poppins',sans-serif; padding:4px 6px; border-radius:999px; border:1px solid rgba(255,255,255,.3); backdrop-filter: blur(6px); background: rgba(0,0,0,.35); }
+    .badge.vip { color:#1a1330; background: linear-gradient(180deg, var(--gold-soft), var(--gold)); border-color: var(--gold-deep); }
+    .badge.live { color:#fff; background: linear-gradient(180deg, #ef4444, #b91c1c); border-color:#7f1d1d; }
+    .badge.new { color:#fff; background: linear-gradient(180deg, #22c55e, #15803d); border-color:#14532d; }
+    .badge.rtp { color:var(--gold-soft); border-color: rgba(245,217,140,.6); }
+
+    .content { padding:12px; display:flex; flex-direction:column; gap:6px; }
+    .name { font-family:'Poppins',sans-serif; font-weight:900; color:var(--gold-soft); letter-spacing:.02em; }
+    .meta { opacity:.9; font-size:12px; }
+    .cta { align-self:flex-start; margin-top:8px; text-decoration:none; font-weight:900; font-family:'Poppins',sans-serif; color:#1a1330; background: linear-gradient(180deg, var(--gold-soft), var(--gold)); border:1.4px solid var(--gold-deep); padding:8px 12px; border-radius:12px; box-shadow: 0 8px 18px rgba(212,175,55,.35), inset 0 2px 0 rgba(255,255,255,.5); position:relative; overflow:hidden; }
+    .cta::after { content:''; position:absolute; top:0; left:-40%; width:40%; height:100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,.6), transparent); transform:skewX(-20deg); transition: left .5s ease; }
+    .cta:hover::after { left:120%; }
+
+    /* Shine sweep on card */
+    .shine { position:absolute; inset:-100% -60%; background: linear-gradient(115deg, transparent 35%, rgba(255,255,255,.25) 50%, transparent 65%); transform: translate3d(-10%,0,0) rotate(8deg); transition: .6s; }
+    .card:hover .shine { transform: translate3d(30%,0,0) rotate(8deg); }
+
+    /* Corner sparkle (top-right) */
+    .sparkle { position:absolute; top:6px; right:6px; width:18px; height:18px; pointer-events:none; }
+    .sparkle::before, .sparkle::after { content:''; position:absolute; inset:0; border-radius:50%; background: radial-gradient(circle at 40% 40%, rgba(255,255,255,.95), rgba(255,255,255,.2) 40%, rgba(255,255,255,0) 70%); filter: drop-shadow(0 0 6px rgba(245,217,140,.8)); }
+    .sparkle::after { background: radial-gradient(circle at 60% 60%, rgba(245,217,140,.9), rgba(212,175,55,.25) 45%, rgba(212,175,55,0) 70%); transform: scale(.7); }
+    @keyframes bling { 0%{ transform: scale(.6) rotate(0deg); opacity:.8;} 50%{ transform: scale(1) rotate(30deg); opacity:1;} 100%{ transform: scale(.6) rotate(0deg); opacity:.8;} }
+    .sparkle { animation: bling 1.6s ease-in-out infinite; }
+
+    /* Bottom nav & FAB */
+    .bottom-nav { display:none; }
+    .fab { display:none; }
+
+    /* Tablet */
+    @media (max-width: 1200px) { .grid { grid-template-columns: repeat(3, minmax(0,1fr)); } }
+    @media (max-width: 900px)  { .grid { grid-template-columns: repeat(2, minmax(0,1fr)); } }
+    @media (max-width: 1024px) { .page-wrap { position:relative; min-height:100vh; padding:48px 24px; } .main-offset { margin-left:230px; } }
+    /* Mobile */
+    @media (max-width: 767px) {
+      html, body { overflow:auto; }
+      .sidebar { display:none; }
+      .main-offset { margin-left:0; }
+      .page-wrap { padding:84px 16px calc(112px + var(--safe-bottom)); min-height:100vh; display:block; }
+      .page { width:100%; padding:16px; border-radius:22px; }
+      .header { flex-direction:column; align-items:stretch; gap:12px; }
+      .mini-slot { justify-content:space-between; }
+      .grid { grid-template-columns: 1fr; }
+
+      .bottom-nav { position: fixed; left: 0; right: 0; bottom: 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; align-items: end; padding: 10px 12px calc(10px + var(--safe-bottom)); z-index: 50; background: linear-gradient(180deg, rgba(24, 18, 38, .96), rgba(18, 14, 32, .96)); border-top: 1.4px solid rgba(212,175,55,.45); box-shadow: 0 -8px 26px rgba(0,0,0,.5); }
+      .bottom-item { display:flex; flex-direction:column; align-items:center; justify-content:center; padding:8px 10px; border-radius:12px; color:#eaddff; text-decoration:none; font-size:12px; font-weight:800; font-family:'Poppins',sans-serif; letter-spacing:.02em; border:1px solid transparent; transition: transform .15s ease, background .25s ease, border .25s ease; }
+      .bottom-item .icon { font-size:22px; margin-bottom:4px; }
+      .bottom-item:hover { background: rgba(60,30,80,.18); border-color: rgba(212,175,55,.35); }
+      .bottom-item.active { background: linear-gradient(180deg, rgba(245,217,140,.15), rgba(245,217,140,.05)); border-color: rgba(245,217,140,.55); color: var(--gold-soft); }
+
+      .fab { position: fixed; left: 50%; bottom: calc(56px + var(--safe-bottom)); transform: translateX(-50%); z-index: 60; display: grid; place-items: center; width: 64px; height: 64px; border-radius: 20px; color: #1a1330; text-decoration: none; font-family: 'Poppins', sans-serif; font-weight: 900; background: linear-gradient(180deg, var(--gold-soft), var(--gold)); border: 1.8px solid var(--gold-deep); box-shadow: 0 16px 36px rgba(212,175,55,.45), inset 0 2px 0 rgba(255,255,255,.6); }
+      .fab:active { transform: translateX(-50%) translateY(1px); }
+    }
+  </style>
+</head>
+<body>
+  <div class="vignette"></div>
+  <div id="particles-js" class="absolute inset-0 z-0" style="transform: translateZ(0);"></div>
+  <div id="particles-js-extra" class="absolute inset-0 z-0" style="opacity:.9;"></div>
+
+  <!-- Sidebar (desktop/tablet) -->
+  <div class="sidebar">
+    <nav class="flex flex-col w-full px-1 md:px-3">
+      <a href="profile.html" class="sidebar-link" tabindex="0"><span class="sidebar-icon">👤</span><span class="sidebar-text">Профиль</span></a>
+      <a href="instruction.html" class="sidebar-link" tabindex="0"><span class="sidebar-icon">📜</span><span class="sidebar-text">Инструкция</span></a>
+      <a href="games.html" class="sidebar-link active" tabindex="0"><span class="sidebar-icon">🎮</span><span class="sidebar-text">Игры</span></a>
+      <a href="about.html" class="sidebar-link" tabindex="0"><span class="sidebar-icon">ℹ️</span><span class="sidebar-text">О нас</span></a>
+    </nav>
+  </div>
+
+  <!-- Mobile bottom nav + FAB -->
+  <a href="#" class="fab" aria-label="Быстрая игра" id="quickPlayFab">🎰</a>
+  <nav class="bottom-nav" aria-label="Навигация">
+    <a class="bottom-item" href="profile.html"><span class="icon">👤</span>Профиль</a>
+    <a class="bottom-item" href="instruction.html"><span class="icon">📜</span>Инфо</a>
+    <a class="bottom-item active" href="games.html"><span class="icon">🎮</span>Игры</a>
+    <a class="bottom-item" href="about.html"><span class="icon">ℹ️</span>О нас</a>
+  </nav>
+
+  <!-- Page -->
+  <main class="page-wrap main-offset">
+    <section class="page">
+      <div class="top-accent"></div>
+      <div class="header">
+        <h2 class="title">Игровой зал</h2>
+        </div>
+      </div>
+
+      <!-- Games grid: reflecting existing files with enhanced cards and corner sparkle -->
+      <div class="grid">
+        <article class="card"><span class="card-border"></span><span class="shine"></span><span class="sparkle"></span><div class="card-inner"><div class="banner" data-emoji="🃏"></div><div class="badges"><span class="badge vip">VIP</span></div><div class="content"><div class="name">Royal Poker</div><div class="meta">VIP-столы</div><a class="cta" href="royal-poker.html">Играть</a></div></div></article>
+        <article class="card"><span class="card-border"></span><span class="shine"></span><span class="sparkle"></span><div class="card-inner"><div class="banner" data-emoji="🃏"></div><div class="badges"><span class="badge live">LIVE</span></div><div class="content"><div class="name">Texas Hold'em</div><div class="meta">Live-столы</div><a class="cta" href="texas-holdem.html">Играть</a></div></div></article>
+        <article class="card"><span class="card-border"></span><span class="shine"></span><span class="sparkle"></span><div class="card-inner"><div class="banner" data-emoji="🎰"></div><div class="badges"><span class="badge rtp">RTP 98%</span></div><div class="content"><div class="name">Slot Machine</div><div class="meta">777 классика</div><a class="cta" href="slot-machine.html">Играть</a></div></div></article>
+        <article class="card"><span class="card-border"></span><span class="shine"></span><span class="sparkle"></span><div class="card-inner"><div class="banner" data-emoji="🎲"></div><div class="badges"><span class="badge new">NEW</span></div><div class="content"><div class="name">Craps</div><div class="meta">Бросок костей</div><a class="cta" href="craps.html">Играть</a></div></div></article>
+
+        <article class="card"><span class="card-border"></span><span class="shine"></span><span class="sparkle"></span><div class="card-inner"><div class="banner" data-emoji="🃠"></div><div class="badges"></div><div class="content"><div class="name">Blackjack Multiplayer</div><div class="meta">21 очко</div><a class="cta" href="blackjack-multiplayer.html">Играть</a></div></div></article>
+        <article class="card"><span class="card-border"></span><span class="shine"></span><span class="sparkle"></span><div class="card-inner"><div class="banner" data-emoji="🃠"></div><div class="badges"></div><div class="content"><div class="name">Baccarat</div><div class="meta">До 9</div><a class="cta" href="baccarat.html">Играть</a></div></div></article>
+        <article class="card"><span class="card-border"></span><span class="shine"></span><span class="sparkle"></span><div class="card-inner"><div class="banner" data-emoji="👑"></div><div class="badges"><span class="badge vip">VIP</span></div><div class="content"><div class="name">Baccarat VIP</div><div class="meta">Премиум</div><a class="cta" href="baccarat-vip.html">Играть</a></div></div></article>
+        <article class="card"><span class="card-border"></span><span class="shine"></span><span class="sparkle"></span><div class="card-inner"><div class="banner" data-emoji="🂡"></div><div class="badges"></div><div class="content"><div class="name">Baccarat Classic</div><div class="meta">Классика</div><a class="cta" href="baccarat-classic.html">Играть</a></div></div></article>
+
+        <article class="card"><span class="card-border"></span><span class="shine"></span><span class="sparkle"></span><div class="card-inner"><div class="banner" data-emoji="🎯"></div><div class="badges"></div><div class="content"><div class="name">Roulette</div><div class="meta">Классическая</div><a class="cta" href="roulette.html">Играть</a></div></div></article>
+        <article class="card"><span class="card-border"></span><span class="shine"></span><span class="sparkle"></span><div class="card-inner"><div class="banner" data-emoji="🇪🇺"></div><div class="badges"></div><div class="content"><div class="name">European Roulette</div><div class="meta">Европейские правила</div><a class="cta" href="european-roulette.html">Играть</a></div></div></article>
+        <article class="card"><span class="card-border"></span><span class="shine"></span><span class="sparkle"></span><div class="card-inner"><div class="banner" data-emoji="🇺🇸"></div><div class="badges"></div><div class="content"><div class="name">American Roulette</div><div class="meta">Американские правила</div><a class="cta" href="american-roulette.html">Играть</a></div></div></article>
+        <article class="card"><span class="card-border"></span><span class="shine"></span><span class="sparkle"></span><div class="card-inner"><div class="banner" data-emoji="🃏"></div><div class="badges"></div><div class="content"><div class="name">Three Card Poker</div><div class="meta">Три карты</div><a class="cta" href="three-card-poker.html">Играть</a></div></div></article>
+      </div>
+    </section>
+  </main>
+
+  <!-- Particles + Mini-slot logic + Card tilt -->
+  <script>
+    // Particles
+    particlesJS('particles-js', {"particles": {"number": {"value": 28, "density": {"enable": true, "value_area": 900}}, "color": {"value": "#D4AF37"}, "shape": {"type": "image", "image": {"src": "img/monetka.png", "width": 50, "height": 50}}, "opacity": {"value": 0.55, "random": true}, "size": {"value": 22, "random": true}, "line_linked": {"enable": false}, "move": {"enable": true, "speed": 1.6, "direction": "none", "random": true, "straight": false, "out_mode": "out"}}, "interactivity": {"detect_on": "canvas", "events": {"onhover": {"enable": true, "mode": "grab"}, "onclick": {"enable": true, "mode": "push"}}, "modes": {"grab": {"distance": 200, "line_linked": {"opacity": 0.32}}, "push": {"particles_nb": 3}}}, "retina_detect": true});
+    particlesJS('particles-js-extra', {"particles": {"number": {"value": 28, "density": {"enable": true, "value_area": 900}}, "color": {"value": "#ffffff"}, "shape": {"type": "image", "image": {"src": "img/moneyemoji.png", "width": 40, "height": 40}}, "opacity": {"value": 0.8, "random": true}, "size": {"value": 20, "random": true}, "line_linked": {"enable": false}, "move": {"enable": true, "speed": 1.4, "direction": "none", "random": true, "straight": false, "out_mode": "out"}}, "interactivity": {"detect_on": "canvas", "events": {"onhover": {"enable": false}, "onclick": {"enable": false}}}, "retina_detect": true});
+
+    // Mini-slot logic (simple)
+    const symbols = ['🍒','🍋','⭐','💎','7️⃣','🍀'];
+    const r1 = document.getElementById('r1');
+    const r2 = document.getElementById('r2');
+    const r3 = document.getElementById('r3');
+    const res = document.getElementById('result');
+    const spin = document.getElementById('spin');
+    const fab = document.getElementById('quickPlayFab');
+
+    function randSym() { return symbols[Math.floor(Math.random()*symbols.length)]; }
+    function delay(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+    async function doSpin() {
+      spin.disabled = true; res.textContent = '...';
+      for (let i=0;i<10;i++){ r1.textContent = randSym(); await delay(60); }
+      for (let i=0;i<14;i++){ r2.textContent = randSym(); await delay(60); }
+      for (let i=0;i<18;i++){ r3.textContent = randSym(); await delay(60); }
+      const a=r1.textContent,b=r2.textContent,c=r3.textContent;
+      if (a===b && b===c) { res.textContent = 'ДЖЕКПОТ!'; }
+      else if (a===b || b===c || a===c) { res.textContent = 'Выигрыш!'; }
+      else { res.textContent = 'Повезет в следующий раз'; }
+      spin.disabled = false;
+    }
+
+    spin.addEventListener('click', doSpin);
+    fab.addEventListener('click', (e)=>{ e.preventDefault(); doSpin(); });
+
+    // Card tilt interaction (mouse)
+    const cards = document.querySelectorAll('.card');
+    cards.forEach(card => {
+      card.addEventListener('mousemove', (e) => {
+        const r = card.getBoundingClientRect();
+        const cx = e.clientX - r.left; const cy = e.clientY - r.top;
+        const rx = ((cy / r.height) - 0.5) * -6; // rotateX
+        const ry = ((cx / r.width)  - 0.5) *  6; // rotateY
+        card.style.transform = `translateY(-6px) rotateX(${rx}deg) rotateY(${ry}deg)`;
+      });
+      card.addEventListener('mouseleave', () => {
+        card.style.transform = '';
+      });
+    });
+  </script>
+</body>
+</html>
