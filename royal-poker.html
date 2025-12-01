@@ -1,0 +1,186 @@
+  <!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+  <title>Роял Покер | Royal Palace</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;800&family=Roboto:wght@400;700&display=swap" rel="stylesheet"/>
+  <style>
+    :root { --gold:#D4AF37; --gold-soft:#F5D98C; --gold-deep:#A7892D; --champagne:#FFEFC4; --velvet-1:#0F0B12; --velvet-2:#1A1220; --velvet-3:#2A1A2F; --violet:#7c3aed; --magenta:#a21caf; --safe-bottom: env(safe-area-inset-bottom); }
+    html, body { margin:0; padding:0; height:100%; overflow:hidden; font-family:'Roboto',sans-serif; color:#f6f4fb; background: radial-gradient(1200px 800px at 70% 30%, rgba(245,217,140,.12), transparent 60%), radial-gradient(1000px 700px at 20% 70%, rgba(162,28,175,.10), transparent 65%), radial-gradient(900px 600px at 80% 85%, rgba(42,26,47,.5), transparent 70%), linear-gradient(180deg, var(--velvet-1) 0%, var(--velvet-2) 60%, #0C0811 100%); background-attachment: fixed; letter-spacing:.2px; }
+    .vignette { position:fixed; inset:0; pointer-events:none; z-index:0; background: radial-gradient(1200px 800px at 50% 50%, transparent 40%, rgba(0,0,0,.35) 100%); }
+
+    /* Sidebar (desktop/tablet) */
+    .sidebar { background: linear-gradient(180deg, rgba(24,18,38,.98), rgba(18,14,32,.98)); border-right:1.6px solid rgba(212,175,55,.45); box-shadow:2px 0 30px rgba(80,0,120,.25); z-index:30; transition:width .3s; width:230px; position:fixed; inset:0 auto 0 0; display:flex; flex-direction:column; align-items:center; padding-top:84px; overflow:hidden; }
+    .main-offset { margin-left:230px; }
+    .sidebar-link { box-sizing:border-box; border:1.6px solid rgba(212,175,55,.45); border-radius:14px; padding:14px 12px; margin:0 .5rem 18px .5rem; transition: background .3s, color .2s, box-shadow .3s, border .3s, transform .2s; font-weight:700; background: rgba(60,30,80,.12); box-shadow:0 6px 14px rgba(162,28,175,.18); display:flex; align-items:center; gap:.65rem; color:#fff; text-decoration:none; font-size:19px; }
+    .sidebar-link:hover { background: linear-gradient(90deg, var(--magenta) 0%, var(--violet) 100%); border-color: rgba(245,217,140,.6); transform: translateY(-2px); }
+    .sidebar-link.active { background: linear-gradient(90deg, var(--gold) 0%, var(--gold-soft) 100%); color:#1a1a3a !important; border-color: rgba(255,215,0,.85); }
+    .sidebar-icon { font-size:2.1rem; }
+    .sidebar-text { font-family:'Poppins',sans-serif; font-weight:800; }
+
+    /* Page container */
+    .page-wrap { position:fixed; inset:0; display:grid; place-items:center; z-index:10; }
+    .page { backdrop-filter: blur(16px) saturate(120%); -webkit-backdrop-filter: blur(16px) saturate(120%); background: linear-gradient(180deg, rgba(45,30,55,.55), rgba(24,18,38,.65)); border:1.6px solid rgba(212,175,55,.55); border-radius:26px; box-shadow:0 28px 80px rgba(0,0,0,.55), inset 0 0 60px rgba(212,175,55,.06); padding:56px 38px 42px; width:min(92vw, 1100px); position:relative; overflow:hidden; isolation:isolate; text-align:center; }
+    .page:before { content:''; position:absolute; inset:-2px; background: conic-gradient(from 160deg at 50% 50%, rgba(212,175,55,0), rgba(212,175,55,.18), rgba(245,217,140,.22), rgba(162,28,175,.14), rgba(212,175,55,0)); filter:blur(18px); pointer-events:none; z-index:-1; }
+    .page::after { content:''; position:absolute; inset:0; pointer-events:none; opacity:.5; background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'><g stroke='%23D4AF37' stroke-opacity='0.35' fill='none' stroke-width='1.2'><path d='M10,60c20-40,80-40,100,0'/><path d='M20,70c20-30,60-30,80,0'/><path d='M30,80c20-20,40-20,60,0'/></g></svg>") no-repeat 10px 10px / 120px 120px, url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'><g stroke='%23D4AF37' stroke-opacity='0.35' fill='none' stroke-width='1.2' transform='rotate(180 60 60)'><path d='M10,60c20-40,80-40,100,0'/><path d='M20,70c20-30,60-30,80,0'/><path d='M30,80c20-20,40-20,60,0'/></g></svg>") no-repeat right 10px bottom 10px / 120px 120px; }
+    .top-accent { position:absolute; top:0; left:0; right:0; height:3px; background: linear-gradient(90deg, transparent, var(--gold), var(--gold-soft), var(--gold), transparent); filter: drop-shadow(0 0 8px rgba(255,215,0,.8)); background-size:220% 100%; animation: slide-accent 4s linear infinite; }
+
+    .crest { position:absolute; top:-34px; left:50%; transform:translateX(-50%); width:82px; height:82px; border-radius:50%; background: radial-gradient(120% 120% at 30% 20%, rgba(255,255,255,.55), rgba(255,255,255,.05) 35%, rgba(0,0,0,0) 36%), radial-gradient(100% 100% at 70% 80%, rgba(255,255,255,.25), rgba(0,0,0,0) 55%), linear-gradient(180deg, rgba(255,240,195,.5), rgba(212,175,55,.45)); border:2.2px solid var(--gold); box-shadow:0 8px 24px rgba(212,175,55,.45), inset 0 0 18px rgba(245,217,140,.25); display:grid; place-items:center; }
+    .crest::after{ content:''; position:absolute; inset:10px; border-radius:50%; border:1.6px solid rgba(255,239,196,.75); box-shadow: inset 0 0 12px rgba(212,175,55,.25); }
+    .crest-icon { font-size:34px; filter: drop-shadow(0 2px 6px rgba(212,175,55,.6)); }
+
+    .title { font-family:'Poppins',sans-serif; font-weight:800; font-size: clamp(1.8rem, 1.2rem + 1.6vw, 2.6rem); background: linear-gradient(92deg, var(--gold), #fff 40%, var(--gold-soft)); -webkit-background-clip:text; background-clip:text; color:transparent; text-shadow:0 0 8px rgba(244,215,124,.35), 0 0 24px rgba(214,175,55,.28); margin-bottom: 10px; }
+    .subtitle { color:#F4F0FB; opacity:.9; max-width: 740px; margin: 0 auto 14px; }
+
+    .info { background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03)); border:1.5px solid rgba(212,175,55,.45); border-radius:16px; padding: 18px 20px; margin: 0 auto 18px; color:#EDE8F5; max-width: 760px; }
+    .table { margin: 20px auto; background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02)); border: 1.5px solid rgba(212,175,55,.45); border-radius: 18px; padding: 22px 12px 18px; box-shadow: inset 0 0 22px rgba(212,175,55,.12); position: relative; }
+
+    .cards-row { display: flex; justify-content: center; gap: 10px; margin-bottom: 14px; flex-wrap: wrap; }
+    .card { display: inline-grid; place-items:center; background: #1b1628; border-radius: 10px; padding: 12px 14px; box-shadow: 0 10px 26px rgba(0,0,0,.35), inset 0 0 0 rgba(255,255,255,0); font-size: 1.8rem; font-family: 'Poppins'; color: #fff; border: 1.6px solid rgba(212,175,55,.55); min-width: 56px; cursor:pointer; transition: transform .15s ease, box-shadow .2s ease, border .2s ease; }
+    .card.red { color: #ff6b9a; }
+    .card.selected { transform: translateY(-4px); box-shadow: 0 18px 44px rgba(212,175,55,.28); border-color: rgba(245,217,140,.75); }
+
+    .pot { font-weight:800; color: var(--gold-soft); margin-bottom: 8px; }
+    .actions { display:flex; justify-content:center; gap:12px; margin-top: 10px; flex-wrap: wrap; }
+    .btn { cursor:pointer; user-select:none; border-radius: 14px; padding: 10px 16px; font-weight:800; letter-spacing:.02em; font-family:'Poppins',sans-serif; border: 1.6px solid var(--gold-deep); transition: transform .15s ease, box-shadow .25s ease, background .25s ease, border .25s ease; text-decoration:none; }
+    .btn.primary { color:#1a1330; background: linear-gradient(180deg, var(--gold-soft), var(--gold)); box-shadow: 0 12px 28px rgba(212,175,55,.35), inset 0 2px 0 rgba(255,255,255,.5); }
+    .btn.primary:hover { transform: translateY(-1px); box-shadow: 0 16px 36px rgba(212,175,55,.5), inset 0 2px 0 rgba(255,255,255,.6); border-color:#E3C76B; }
+    .btn.secondary { color: var(--gold-soft); background: linear-gradient(180deg, rgba(42,26,47,.9), rgba(26,18,32,.9)); border-color: rgba(212,175,55,.45); box-shadow: 0 10px 24px rgba(0,0,0,.35); }
+    .message { margin-top: 14px; min-height: 28px; color: var(--champagne); font-weight: 700; }
+
+    .rules { display:grid; grid-template-columns: 1fr 1fr; gap: 14px; background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03)); border: 1.5px solid rgba(212,175,55,.45); border-radius: 16px; padding: 16px; margin-top: 16px; text-align:left; }
+    .rules ol { margin: 0; padding: 0 0 0 18px; }
+    .combos { background:#1b1628; border: 1px solid rgba(212,175,55,.45); border-radius:10px; padding:10px 16px; font-size: 0.95rem; }
+    .advice { color: var(--gold-soft); font-weight:800; }
+
+    /* Mobile/Tablet */
+    .bottom-nav { display:none; }
+    .fab { display:none; }
+    @media (max-width: 1024px) { .page-wrap { position:relative; min-height:100vh; padding:48px 24px; } .main-offset { margin-left:230px; } }
+    @media (max-width: 767px) {
+      html, body { overflow:auto; }
+      .sidebar { display:none; }
+      .main-offset { margin-left:0; }
+      .page-wrap { padding:84px 16px calc(112px + var(--safe-bottom)); min-height:100vh; display:block; }
+      .page { width:100%; padding:14vw 5vw 12vw; border-radius:22px; }
+      .rules { grid-template-columns: 1fr; }
+
+      .bottom-nav { position: fixed; left: 0; right: 0; bottom: 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; align-items: end; padding: 10px 12px calc(10px + var(--safe-bottom)); z-index: 50; background: linear-gradient(180deg, rgba(24, 18, 38, .96), rgba(18, 14, 32, .96)); border-top: 1.4px solid rgba(212,175,55,.45); box-shadow: 0 -8px 26px rgba(0,0,0,.5); }
+      .bottom-item { display:flex; flex-direction:column; align-items:center; justify-content:center; padding:8px 10px; border-radius:12px; color:#eaddff; text-decoration:none; font-size:12px; font-weight:800; font-family:'Poppins',sans-serif; letter-spacing:.02em; border:1px solid transparent; transition: transform .15s ease, background .25s ease, border .25s ease; }
+      .bottom-item .icon { font-size:22px; margin-bottom:4px; }
+      .bottom-item:hover { background: rgba(60,30,80,.18); border-color: rgba(212,175,55,.35); }
+      .bottom-item.active { background: linear-gradient(180deg, rgba(245,217,140,.15), rgba(245,217,140,.05)); border-color: rgba(245,217,140,.55); color: var(--gold-soft); }
+
+      .fab { position: fixed; left: 50%; bottom: calc(56px + var(--safe-bottom)); transform: translateX(-50%); z-index: 60; display: grid; place-items: center; width: 64px; height: 64px; border-radius: 20px; color: #1a1330; text-decoration: none; font-family: 'Poppins', sans-serif; font-weight: 900; background: linear-gradient(180deg, var(--gold-soft), var(--gold)); border: 1.8px solid var(--gold-deep); box-shadow: 0 16px 36px rgba(212,175,55,.45), inset 0 2px 0 rgba(255,255,255,.6); }
+      .fab:active { transform: translateX(-50%) translateY(1px); }
+    }
+  </style>
+</head>
+<body>
+  <div class="vignette"></div>
+  <div id="particles-js" class="absolute inset-0 z-0" style="transform: translateZ(0);"></div>
+  <div id="particles-js-extra" class="absolute inset-0 z-0" style="opacity:.9;"></div>
+
+  <!-- Sidebar (desktop/tablet) -->
+  <div class="sidebar">
+    <nav class="flex flex-col w-full px-1 md:px-3">
+      <a href="profile.html" class="sidebar-link" tabindex="0"><span class="sidebar-icon">👤</span><span class="sidebar-text">Профиль</span></a>
+      <a href="instruction.html" class="sidebar-link" tabindex="0"><span class="sidebar-icon">📜</span><span class="sidebar-text">Инструкция</span></a>
+      <a href="games.html" class="sidebar-link active" tabindex="0"><span class="sidebar-icon">🎮</span><span class="sidebar-text">Игры</span></a>
+      <a href="about.html" class="sidebar-link" tabindex="0"><span class="sidebar-icon">ℹ️</span><span class="sidebar-text">О нас</span></a>
+    </nav>
+  </div>
+
+  <!-- Mobile bottom nav + FAB -->
+  <a href="#" class="fab" aria-label="Новая раздача" id="dealFab">🃏</a>
+  <nav class="bottom-nav" aria-label="Навигация">
+    <a class="bottom-item" href="profile.html"><span class="icon">👤</span>Профиль</a>
+    <a class="bottom-item" href="instruction.html"><span class="icon">📜</span>Инфо</a>
+    <a class="bottom-item" href="games.html"><span class="icon">🎮</span>Игры</a>
+    <a class="bottom-item active" href="about.html" style="pointer-events:none; opacity:.75"><span class="icon">♚</span>Покер</a>
+  </nav>
+
+  <!-- Page content -->
+  <main class="page-wrap main-offset">
+    <section class="page">
+      <div class="top-accent"></div>
+      <div class="crest"><div class="crest-icon">👑</div></div>
+      <h1 class="title">Роял Покер</h1>
+      <p class="subtitle">Ваша задача — собрать лучшую пятикартовую комбинацию. Выберите до 3 карт для обмена, нажмите «Обмен», затем завершите раунд ставками или шоудауном.</p>
+
+      <div class="info">Ваша ставка — 100. Выберите карты для обмена (до 3) и нажмите «Обмен».</div>
+
+      <div class="table">
+        <div id="player-cards" class="cards-row"></div>
+        <div class="pot" id="pot">Банк: 0</div>
+        <div class="actions" id="actions">
+          <button class="btn secondary" onclick="royalAction('check')">Чек</button>
+          <button class="btn secondary" onclick="royalAction('call')">Колл</button>
+          <button class="btn secondary" onclick="royalAction('raise')">Рейз</button>
+          <button class="btn secondary" onclick="royalAction('fold')">Фолд</button>
+          <button class="btn primary" onclick="royalAction('exchange')">Обмен</button>
+          <button class="btn primary" onclick="startRoyalPokerGame()">Новая раздача</button>
+        </div>
+        <div class="message" id="royal-message"></div>
+      </div>
+
+      <div class="rules">
+        <div>
+          <ol>
+            <li><b>1. Раздача:</b> Каждый игрок получает по 5 карт.</li>
+            <li><b>2. Первый раунд ставок:</b> Игроки делают ставки или сбрасывают карты.</li>
+            <li><b>3. Обмен:</b> Игроки могут обменять до 3 карт.</li>
+            <li><b>4. Второй раунд ставок:</b> Ставки продолжаются.</li>
+            <li><b>5. Шоудаун:</b> Игроки вскрывают карты. Побеждает лучшая комбинация.</li>
+          </ol>
+        </div>
+        <div>
+          <div class="combos">
+            <b>Комбинации (от старшей к младшей):</b><br>
+            Роял-флеш, Стрит-флеш, Каре, Фул-хаус, Флеш, Стрит, Сет, Две пары, Пара, Старшая карта.
+          </div>
+          <div class="advice">Совет: Следите за комбинациями и не бойтесь сбрасывать карты!</div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Particles + Game logic -->
+  <script>
+    particlesJS('particles-js', {"particles": {"number": {"value": 28, "density": {"enable": true, "value_area": 900}}, "color": {"value": "#D4AF37"}, "shape": {"type": "image", "image": {"src": "img/monetka.png", "width": 50, "height": 50}}, "opacity": {"value": 0.55, "random": true}, "size": {"value": 22, "random": true}, "line_linked": {"enable": false}, "move": {"enable": true, "speed": 1.6, "direction": "none", "random": true, "straight": false, "out_mode": "out"}}, "interactivity": {"detect_on": "canvas", "events": {"onhover": {"enable": true, "mode": "grab"}, "onclick": {"enable": true, "mode": "push"}}, "modes": {"grab": {"distance": 200, "line_linked": {"opacity": 0.32}}, "push": {"particles_nb": 3}}}, "retina_detect": true});
+    particlesJS('particles-js-extra', {"particles": {"number": {"value": 28, "density": {"enable": true, "value_area": 900}}, "color": {"value": "#ffffff"}, "shape": {"type": "image", "image": {"src": "img/moneyemoji.png", "width": 40, "height": 40}}, "opacity": {"value": 0.8, "random": true}, "size": {"value": 20, "random": true}, "line_linked": {"enable": false}, "move": {"enable": true, "speed": 1.4, "direction": "none", "random": true, "straight": false, "out_mode": "out"}}, "interactivity": {"detect_on": "canvas", "events": {"onhover": {"enable": false}, "onclick": {"enable": false}}}, "retina_detect": true});
+
+    // Royal Poker demo logic (unchanged core)
+    const suits = ['♠', '♥', '♦', '♣'];
+    const ranks = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
+    let deck = []; let playerCards = []; let pot = 0; let exchangeSelected = []; let exchanged = false;
+    function createDeck() { let d = []; for (let s of suits) for (let r of ranks) d.push({s, r}); return d.sort(() => Math.random() - 0.5); }
+    function renderPlayerCards() {
+      const el = document.getElementById('player-cards'); el.innerHTML = '';
+      playerCards.forEach((c, i) => {
+        const red = (c.s === '♥' || c.s === '♦');
+        const classes = ['card']; if (red) classes.push('red'); if (exchangeSelected.includes(i)) classes.push('selected');
+        const div = document.createElement('div'); div.className = classes.join(' ');
+        div.innerHTML = `${c.r}<span style='font-size:1.1rem; margin-left:4px;'>${c.s}</span>`; div.onclick = () => toggleExchange(i);
+        el.appendChild(div);
+      });
+    }
+    function toggleExchange(idx) { if (exchanged) return; if (exchangeSelected.includes(idx)) { exchangeSelected = exchangeSelected.filter(i => i !== idx);} else if (exchangeSelected.length < 3) { exchangeSelected.push(idx);} renderPlayerCards(); }
+    function startRoyalPokerGame() { deck = createDeck(); playerCards = [deck.pop(), deck.pop(), deck.pop(), deck.pop(), deck.pop()]; pot = 100; exchangeSelected = []; exchanged = false; document.getElementById('royal-message').textContent = 'Ваша ставка — 100. Выберите карты для обмена (до 3) и нажмите «Обмен».'; renderPlayerCards(); document.getElementById('pot').textContent = 'Банк: ' + pot; }
+    function royalAction(action) {
+      if (action === 'fold') { document.getElementById('royal-message').textContent = 'Вы сбросили карты. Попробуйте новую раздачу!'; exchanged = true; return; }
+      if (action === 'raise') { pot += 50; document.getElementById('pot').textContent = 'Банк: ' + pot; document.getElementById('royal-message').textContent = 'Вы повысили ставку!'; return; }
+      if (action === 'call') { pot += 20; document.getElementById('pot').textContent = 'Банк: ' + pot; document.getElementById('royal-message').textContent = 'Вы уравняли ставку.'; return; }
+      if (action === 'check') { document.getElementById('royal-message').textContent = 'Вы сделали чек.'; return; }
+      if (action === 'exchange' && !exchanged) { if (exchangeSelected.length === 0) { document.getElementById('royal-message').textContent = 'Выберите карты для обмена.'; return; } exchangeSelected.forEach(idx => { playerCards[idx] = deck.pop(); }); exchanged = true; exchangeSelected = []; renderPlayerCards(); document.getElementById('royal-message').textContent = 'Обмен выполнен! Теперь сделайте ставку или перейдите к шоудауну.'; return; }
+    }
+    window.onload = startRoyalPokerGame;
+
+    // FAB: new deal on mobile
+    document.getElementById('dealFab').addEventListener('click', (e)=>{ e.preventDefault(); startRoyalPokerGame(); });
+  </script>
+</body>
+</html> 
